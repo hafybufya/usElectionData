@@ -18,5 +18,22 @@ election_df = read_election_data()
 print(election_df)
 
 
+def fractional_votes_state():
+    pass
+
+
+
+
 def plot_histogram():
     pass
+
+
+
+
+#mask to get OECD data 
+masked_state = election_df[election_df['state'] == 'Vermont'].copy()
+print(masked_state)
+
+masked_candidate = masked_state[masked_state['candidate'] == 'John Kasich'].copy()
+print(masked_candidate)
+
