@@ -30,10 +30,12 @@ def plot_histogram():
 
 
 
-#mask to get OECD data 
+#mask to get election data 
 masked_state = election_df[election_df['state'] == 'Vermont'].copy()
 print(masked_state)
 
 masked_candidate = masked_state[masked_state['candidate'] == 'John Kasich'].copy()
 print(masked_candidate)
 
+
+#x axis = state and which fraction of the vote support each candidate
