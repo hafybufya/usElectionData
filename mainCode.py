@@ -1,9 +1,29 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-csv_in_use = "usdata.csv"
-y_axis = "Close/Last"
-# colors for plots
-colour_1 = "#2596be"
+csv_in_use = "usData.csv"
+
+prompt_number_bins = "How many bins for the histogram?"
+prompt_candidate = "What candidate would you like to generate a histogram for"
+
+min_number_bins = 5
+max_number_bins = 50
+prompt_error_handling= "Values must fall in the range"
+
+def get_number_bins():
+    """function which gets the day of the week the month starts on and preforms error handling """               
+    while True:
+        try:
+            number_bins  = int(input(prompt_number_bins))
+            if min_number_bins <= number_bins  <= max_number_bins :
+                return number_bins
+            else:
+                print(f"{prompt_error_handling} {prompt_number_bins} to {max_number_bins}")
+        except ValueError:
+            print(f"{prompt_error_handling} {min_number_bins} to {max_number_bins}")
+
+            return number_bins
+    
+number_bins = get_number_bins()
 
 
 def read_election_data():
@@ -24,25 +44,12 @@ def read_election_data():
 def plot_histogram():
     election_df = read_election_data()
     individual_candidate_df = election_df[election_df['candidate'] == 'John Kasich'].copy()
-    plt.hist(individual_candidate_df["fraction_votes"], bins=15, edgecolor="black")
+    plt.hist(individual_candidate_df["fraction_votes"], bins=number_bins, edgecolor="black")
     plt.title("Vote Fraction Distribution for John Kasich")
     plt.xlabel("Fraction of Votes")
     plt.ylabel("Number of States")
     plt.show()
 
-    
-
 plot_histogram()
 
 
-
-
-#mask to get election data 
-# masked_state = election_df[election_df['state'] == 'Vermont'].copy()
-# print(masked_state)
-
-# masked_candidate = masked_state[masked_state['candidate'] == 'John Kasich'].copy()
-# print(masked_candidate)
-
-
-# #x axis = state and which fraction of the vote support each candidate
