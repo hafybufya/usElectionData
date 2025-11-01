@@ -15,15 +15,24 @@ def read_election_data():
     election_df = (
     og_df.groupby(["state", "candidate"])["fraction_votes"]
     .sum()
-    .reset_index()
+    .reset_index()    
 )
-
-
+    return election_df
 
 
 
 def plot_histogram():
-    pass
+    election_df = read_election_data()
+    individual_candidate_df = election_df[election_df['candidate'] == 'John Kasich'].copy()
+    plt.hist(individual_candidate_df["fraction_votes"], bins=15, edgecolor="black")
+    plt.title("Vote Fraction Distribution for John Kasich")
+    plt.xlabel("Fraction of Votes")
+    plt.ylabel("Number of States")
+    plt.show()
+
+    
+
+plot_histogram()
 
 
 
