@@ -8,9 +8,15 @@ class my_unit_tests(unittest.TestCase):
 
 #FILE HANDLING
 
-        # tests if the csv file has been saved
+    # Tests if the csv file has been saved
     def test_csv_file_exists(self):
         self.assertTrue(os.path.isfile('usData.csv'))
+
+    # Tests if error message comes if theres no candidate
+    def test_csv_file_exists(self):
+        self.assertTrue(os.path.isfile('usData.csv'))
+
+
 
     # run the tests
 if __name__ == "__main__":

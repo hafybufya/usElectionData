@@ -5,7 +5,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
 # ---------------------------------------------------------------------
 # Defined CSV file name, prompts and values used in program
 #  -> make the code flexible if used dataset changed
@@ -15,15 +14,16 @@ import matplotlib.pyplot as plt
 csv_in_use = "usData.csv"
 
 prompt_number_bins = "How many bins for the histogram?"
-prompt_candidate = "What candidate would you like to generate a histogram for"
-prompt_error_handling= "Values must fall in the range"
+prompt_error_handling= "Values must fall in the range:"
 
+prompt_candidate = "Enter the candidate name exactly as shown above:"
+prompt_error_candidate = "Invalid candidate name. Please choose from the list above."
 
-#min and max number of bins in histogram
+# Min and max number of bins in histogram
 min_number_bins = 5
 max_number_bins = 50
 
-
+error_message =  f"{prompt_error_handling} {min_number_bins} to {max_number_bins}"
 
 # ---------------------------------------------------------------------
 # FUNCTION: Read CSV data into Dataframe
@@ -48,18 +48,16 @@ def read_election_data():
     .sum()
     .reset_index()    
 )
+    # Returned to be used in  plot_histogram()
     return election_df
 
-election_df = read_election_data()
-
-print(election_df)
 
 
 # ---------------------------------------------------------------------
 # FUNCTION: Get number of bins from user
 # ---------------------------------------------------------------------
 
-def get_number_bins(number_bins= None):
+def get_number_bins():
     """
 
     Asks user for number of bins to pass in for histogram
@@ -80,23 +78,24 @@ def get_number_bins(number_bins= None):
     while True:
         try:
             number_bins  = int(input(prompt_number_bins))
-            if min_number_bins <= number_bins  <= max_number_bins :
-                return number_bins
-            else:
-                print(f"{prompt_error_handling} {prompt_number_bins} to {max_number_bins}")
+
+        # Users can't input strings
         except ValueError:
             print(f"{prompt_error_handling} {min_number_bins} to {max_number_bins}")
-
-            return number_bins
+      
+        # Users can't input values smaller than min and larger than max
+        if number_bins < min_number_bins or number_bins > max_number_bins: 
+            raise ValueError(f"{error_message}")     
+        
+        # Returned to be passed into plot_histogram()
+        return number_bins
     
-number_bins = get_number_bins()
-
 
 # ---------------------------------------------------------------------
 # FUNCTION: Get candidate name from user
 # ---------------------------------------------------------------------
 
-def get_candidate_name(candidate = None):
+def get_candidate_name():
     """
 
     Asks user for name of candidate to pass into histogram
@@ -118,15 +117,13 @@ def get_candidate_name(candidate = None):
     for candidate in list_of_candidates:
         print(candidate, ",") #puts results on different lines seperates by ','
     while True:
-        candidate = input("Enter the candidate name exactly as shown above:")
+    
+        candidate = input(prompt_candidate)
 
         if candidate in list_of_candidates:
             return candidate
         else:
-            print("Invalid candidate name. Please choose from the list above.")
-
-candidate_name = get_candidate_name()
-
+            print(prompt_error_candidate)
 
 # ---------------------------------------------------------------------
 # FUNCTION: Plot histogram
@@ -162,9 +159,15 @@ def plot_histogram(number_bins = None , candidate_name= None ):
     plt.ylabel("Number of States")
     plt.show()
 
-plot_histogram()
 
 
 
-error handling so that if e.g. candiate name == None
-that there is an error message
+
+if __name__ == "__main__":
+    election_df = read_election_data()
+    number_bins = get_number_bins()
+    candidate_name = get_candidate_name()
+    plot_histogram(number_bins, candidate_name)
+
+
+
