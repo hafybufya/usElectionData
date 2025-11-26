@@ -13,17 +13,19 @@ import matplotlib.pyplot as plt
 
 csv_in_use = "usData.csv"
 
-prompt_number_bins = "How many bins for the histogram?"
-prompt_error_handling= "Values must fall in the range:"
-
-prompt_candidate = "Enter the candidate name exactly as shown above:"
-prompt_error_candidate = "Invalid candidate name. Please choose from the list above."
-
 # Min and max number of bins in histogram
 min_number_bins = 5
 max_number_bins = 50
 
-error_message =  f"{prompt_error_handling} {min_number_bins} to {max_number_bins}"
+# Prompts and error handling for bins
+prompt_number_bins = "How many bins for the histogram?"
+prompt_error_handling= "Values must fall in the range:"
+
+# Prompts and error handling for candiate name
+prompt_candidate = "Enter the candidate name exactly as shown above:"
+prompt_error_candidate = "Invalid candidate name. Please choose from the list above."
+
+bins_error_message =  f"{prompt_error_handling} {min_number_bins} to {max_number_bins}"
 
 # ---------------------------------------------------------------------
 # FUNCTION: Read CSV data into Dataframe
@@ -51,7 +53,8 @@ def read_election_data():
     # Returned to be used in  plot_histogram()
     return election_df
 
-
+# Initiliased in main code so can be used in unitTest.py
+election_df = read_election_data()
 
 # ---------------------------------------------------------------------
 # FUNCTION: Get number of bins from user
@@ -78,18 +81,17 @@ def get_number_bins():
     while True:
         try:
             number_bins  = int(input(prompt_number_bins))
-
         # Users can't input strings
         except ValueError:
-            print(f"{prompt_error_handling} {min_number_bins} to {max_number_bins}")
+            raise ValueError(f"{bins_error_message}")
       
         # Users can't input values smaller than min and larger than max
         if number_bins < min_number_bins or number_bins > max_number_bins: 
-            raise ValueError(f"{error_message}")     
+            raise ValueError(f"{bins_error_message}")     
         
         # Returned to be passed into plot_histogram()
         return number_bins
-    
+
 
 # ---------------------------------------------------------------------
 # FUNCTION: Get candidate name from user
@@ -112,18 +114,17 @@ def get_candidate_name():
     string -> candiate name which is found in the list 
 
     """
-
-    list_of_candidates = election_df['candidate'].unique() #gets all the individual names from csv in candiate column
+    # Gets all the individual names from csv in candiate column
+    list_of_candidates = election_df['candidate'].unique() 
     for candidate in list_of_candidates:
-        print(candidate, ",") #puts results on different lines seperates by ','
+        print(candidate, ",") # Places results on different lines seperates by ','
+   
     while True:
-    
         candidate = input(prompt_candidate)
+        if candidate not in list_of_candidates:
+            raise ValueError(prompt_error_candidate)
+        return candidate
 
-        if candidate in list_of_candidates:
-            return candidate
-        else:
-            print(prompt_error_candidate)
 
 # ---------------------------------------------------------------------
 # FUNCTION: Plot histogram
@@ -151,8 +152,9 @@ def plot_histogram(number_bins = None , candidate_name= None ):
                                 
 
     """
-
+    # Mask to get only user selected candiate  data
     individual_candidate_df = election_df[election_df['candidate'] == candidate_name].copy()
+    # Number of bins from get_number_bins()
     plt.hist(individual_candidate_df["fraction_votes"], bins=number_bins, edgecolor="black")
     plt.title(f"Vote Fraction Distribution for {candidate_name}")
     plt.xlabel("Fraction of Votes")
@@ -161,10 +163,9 @@ def plot_histogram(number_bins = None , candidate_name= None ):
 
 
 
-
-
+# run program
 if __name__ == "__main__":
-    election_df = read_election_data()
+
     number_bins = get_number_bins()
     candidate_name = get_candidate_name()
     plot_histogram(number_bins, candidate_name)
