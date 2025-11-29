@@ -34,11 +34,12 @@ Python modules required:
 
 * pandas – reading and handling CSV files.
 * matplotlib – plotting graphs.
+* os - checking if files exist.
 
 You can install required packages with:
 
 ```
-pip install pandas matplotlib
+pip install pandas matplotlib os
 
 ```
 
